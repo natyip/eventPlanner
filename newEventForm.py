@@ -1,5 +1,7 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import IntVar, ttk
+
+from click import command
 from config.config import *
 # from utilities import utilities
 
@@ -10,16 +12,42 @@ BODY_FRAME_HEIGHT=600
 class newEventForm(tk.Frame):
     def prevPage(self):
         self.destroy()
-
+        
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
         # for non popup window mode
         # self.configure(height=500, width=600, background='blue')
         self.configure(background=ROOT_BG_COLOR)
-
-        # def prevPage():
-        #     self.destroy()
+        # var def
+        isMulitDay = tk.IntVar()
+        dateStr= tk.StringVar()
+        dateStr.set("Date:")
+        # __init__ inner functions def
+        def isMulitDayFunc():
+            if (isMulitDay.get()):
+                print('isMulitDayFunc: ', isMulitDay.get())
+                dateStr.set("Start Date:")
+                global date2Label
+                date2Label = tk.Label(body, text="End Date:",
+                    bg=ROOT_BG_COLOR,
+                    bd=2,
+                    fg='black',
+                    font=("Arial", 22))
+                global date2Entry
+                date2Entry = tk.Entry(body,
+                    bg=ROOT_BG_COLOR,
+                    bd=2,
+                    fg='black',
+                    font=("Arial", 22),
+                    relief='sunken')
+                date2Label.grid(row=2,column=2, sticky='w', pady=5)
+                date2Entry.grid(row=2,column=3, sticky='we', pady=5)
+            else:
+                print('isMulitDayFunc: ', isMulitDay.get())
+                dateStr.set("Date:")
+                date2Label.destroy()
+                date2Entry.destroy()
 
         header = tk.Frame(
             self, 
@@ -67,7 +95,7 @@ class newEventForm(tk.Frame):
         body.grid_columnconfigure(2, weight=1) # For column 2
         body.grid_columnconfigure(3, weight=1) # For column 3 
         # ROW 0
-        nameLable = tk.Label(body, text="Event Name: ",
+        nameLabel = tk.Label(body, text="Event Name:",
             bg=ROOT_BG_COLOR,
             bd=2,
             fg='black',
@@ -78,18 +106,22 @@ class newEventForm(tk.Frame):
             fg='black',
             font=("Arial", 22),
             relief='sunken')
-        nameLable.grid(row=0,column=0, sticky='w', pady=5)
+        nameEntry.focus()
+        nameLabel.grid(row=0,column=0, sticky='w', pady=5)
         nameEntry.grid(row=0,column=1, columnspan=3, sticky='we', pady=5)
         # ROW 1
-        isMulitDay = tk.Checkbutton(body,
+        isMulitDayCheckBox = tk.Checkbutton(body,
             text="Multi-day event",
             bg=ROOT_BG_COLOR,
             bd=2,
             fg='black',
-            font=("Arial", 22))
-        isMulitDay.grid(row=1, column=1, columnspan=3, sticky='w', pady=5)
+            font=("Arial", 22),
+            variable=isMulitDay,
+            command=isMulitDayFunc)
+        isMulitDayCheckBox.deselect()
+        isMulitDayCheckBox.grid(row=1, column=1, columnspan=3, sticky='w', pady=5)
         # ROW 2
-        date1Lable = tk.Label(body, text="Start Date: ",
+        date1Label = tk.Label(body, textvariable=dateStr,
             bg=ROOT_BG_COLOR,
             bd=2,
             fg='black',
@@ -100,23 +132,12 @@ class newEventForm(tk.Frame):
             fg='black',
             font=("Arial", 22),
             relief='sunken')
-        date2Lable = tk.Label(body, text="End Date: ",
-            bg=ROOT_BG_COLOR,
-            bd=2,
-            fg='black',
-            font=("Arial", 22))
-        date2Entry = tk.Entry(body,
-            bg=ROOT_BG_COLOR,
-            bd=2,
-            fg='black',
-            font=("Arial", 22),
-            relief='sunken')
-        date1Lable.grid(row=2,column=0, sticky='w', pady=5)
+        date1Label.grid(row=2,column=0, sticky='w', pady=5)
         date1Entry.grid(row=2,column=1, sticky='we', pady=5)
-        date2Lable.grid(row=2,column=2, sticky='w', pady=5)
-        date2Entry.grid(row=2,column=3, sticky='we', pady=5)
+        # date2Label.grid(row=2,column=2, sticky='w', pady=5)
+        # date2Entry.grid(row=2,column=3, sticky='we', pady=5)
         # ROW 3
-        descLable = tk.Label(body, text="Description: ",
+        descLabel = tk.Label(body, text="Description:",
             bg=ROOT_BG_COLOR,
             bd=2,
             fg='black',
@@ -127,7 +148,7 @@ class newEventForm(tk.Frame):
             fg='black',
             font=("Arial", 22),
             relief='sunken')
-        descLable.grid(row=3,column=0, sticky='w', pady=5)
+        descLabel.grid(row=3,column=0, sticky='w', pady=5)
         descEntry.grid(row=3,column=1, columnspan=3, sticky='we', pady=5)
 
         
